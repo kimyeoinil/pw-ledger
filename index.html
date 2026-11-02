@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>PetWellbe ⇄ 瑞生科健 对账本</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei","Malgun Gothic",sans-serif;background:#f4f6fa;color:#1d2433;font-size:14px}
+header{background:#1f3b73;color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+header h1{font-size:16px;margin:0}
+.tg{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.tg button{border:1px solid #9fb3dc;background:transparent;color:#fff;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:13px}
+.tg button.on{background:#fff;color:#1f3b73;font-weight:700}.who{font-size:12px;opacity:.9}
+main{max-width:1100px;margin:0 auto;padding:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px}
+.card{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px #0001}
+.card .l{color:#667;font-size:12px}.card .v{font-size:18px;font-weight:700;margin-top:4px}
+.card.big{background:#e8f3e8;border:1px solid #9cc79c}.card.big .v{font-size:17px}
+.rate input{width:80px;font-size:16px;padding:3px 6px;border:1px solid #c7cfdd;border-radius:6px}
+.bar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0 10px}
+.bar button,.btn{border:1px solid #c7cfdd;background:#fff;padding:6px 11px;border-radius:7px;cursor:pointer;font-size:13px}
+.bar button.on{background:#1f3b73;color:#fff;border-color:#1f3b73}
+.btn.p{background:#2f6fde;color:#fff;border-color:#2f6fde}.btn.d{color:#b3261e;border-color:#e3b3b0}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px #0001}
+th,td{padding:8px 8px;border-bottom:1px solid #eef0f4;text-align:left;vertical-align:top}
+th{background:#eef2fa;font-size:12px;color:#445}td.n{text-align:right;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.t-cn_goods{background:#fdecea;color:#b3261e}.t-kr_goods{background:#e6f0ff;color:#1f4fb3}.t-cn_pay{background:#fff4d6;color:#8a5a00}.t-kr_pay{background:#e7f6ec;color:#1b7a3d}
+.det{display:none;font-size:12px;color:#556;margin-top:6px;background:#f7f8fb;border-radius:8px;padding:8px}.open .det{display:block}
+tr.pend{background:#fffbea}tr.disp{background:#fff1f0}tr.del td{text-decoration:line-through;color:#999}
+.ok{color:#1b7a3d;font-weight:700}.no{color:#c47f00;font-weight:700}
+.note{font-size:12px;color:#b3261e;margin-top:3px}.cnamt{font-size:12px;color:#b3261e}
+.ph{display:inline-block;margin:4px 6px 0 0;color:#2f6fde;cursor:pointer;text-decoration:underline}
+dialog{border:none;border-radius:12px;padding:0;width:min(580px,96vw)}dialog form{padding:16px}
+dialog label{display:block;font-size:12px;color:#556;margin-top:8px}dialog input,dialog select{width:100%;padding:7px;border:1px solid #c7cfdd;border-radius:6px;font-size:14px}
+.row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:6px;margin-top:4px}
+#login{max-width:360px;margin:60px auto;background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 8px #0002}
+#login input{width:100%;padding:10px;margin-top:6px;border:1px solid #c7cfdd;border-radius:8px;font-size:15px}#login button{width:100%;margin-top:14px;padding:11px;font-size:15px}
+#err{color:#c00;margin-top:8px;font-size:13px}.msg{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1d2433;color:#fff;padding:8px 14px;border-radius:8px;display:none;z-index:9}
+@media(max-width:700px){.h-by{display:none}th,td{padding:7px 5px}body{font-size:13px}}
+</style></head><body>
+<header><h1 data-t="title"></h1>
+<div class="tg"><button id="lz">中文</button><button id="lk">한국어</button><span class="who" id="who"></span><button id="out" data-t="logout" style="display:none"></button></div></header>
+<div id="login" style="display:none">
+<h2 style="margin:0 0 8px;font-size:18px" data-t="loginT"></h2>
+<input id="uid" data-ph="idPh" autocomplete="username"><input id="upw" type="password" data-ph="pwPh" autocomplete="current-password">
+<button class="btn p" id="go" data-t="login"></button><div id="err"></div></div>
+<main id="app" style="display:none">
+<div class="cards">
+<div class="card rate"><div class="l" data-t="rate"></div><div class="v"><input id="rate" type="number" step="0.01"> <span style="font-size:13px" data-t="krwPerCny"></span></div><div class="l" id="rateInfo"></div></div>
+<div class="card"><div class="l" data-t="sumCn"></div><div class="v" id="sCn"></div></div>
+<div class="card"><div class="l" data-t="sumKr"></div><div class="v" id="sKr"></div></div>
+<div class="card"><div class="l" data-t="sumPay"></div><div class="v" id="sPay"></div></div>
+<div class="card big"><div class="l" data-t="balance"></div><div class="v" id="bal"></div><div class="l" id="bal2"></div></div>
+</div>
+<div class="bar">
+<button data-f="all" data-t="fAll"></button><button data-f="pend" data-t="fPend"></button>
+<button data-f="cn_goods" data-t="cn_goods"></button><button data-f="kr_goods" data-t="kr_goods"></button><button data-f="pay" data-t="fPay"></button>
+<span style="flex:1"></span><button class="btn p" id="add" data-t="add"></button><button class="btn" id="reload" data-t="reload"></button><button class="btn" id="csv" data-t="csv"></button></div>
+<table><thead><tr><th data-t="date"></th><th data-t="kind"></th><th data-t="content"></th><th class="n" data-t="amount"></th><th class="n" data-t="krw"></th><th class="h-by" data-t="by"></th><th data-t="confirm"></th></tr></thead><tbody id="tb"></tbody></table>
+<p style="font-size:12px;color:#778" data-t="foot"></p>
+</main>
+<dialog id="dlg"><form method="dialog">
+<h3 style="margin:0 0 6px" id="dlgT"></h3>
+<label data-t="date"></label><input type="date" id="fDate" required>
+<label data-t="kind"></label><select id="fType"></select>
+<label data-t="titleF"></label><input id="fTitle">
+<label data-t="itemsF"></label><div id="rows"></div><button type="button" class="btn" id="addRow" style="margin-top:6px">+</button>
+<label data-t="cur"></label><select id="fCur"><option>KRW</option><option>CNY</option></select>
+<label data-t="cnAmtF"></label><input id="fCn" type="number">
+<label data-t="noteF"></label><input id="fNote">
+<p style="font-size:12px;color:#b36b00" data-t="editWarn"></p>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px"><button class="btn" value="cancel" data-t="cancel"></button><button class="btn p" value="ok" data-t="save"></button></div>
+</form></dialog>
+<input type="file" id="file" accept="image/*,application/pdf" style="display:none">
+<div class="msg" id="msg"></div>
+<script>
+const SU='https://vcxnkcemuuvlkxmcisvc.supabase.co',SK='sb_publishable_L3zIF2WHYk4tdBa6iaSTyg_38Ok6RKW',DOM='@ledger.petwellbe.com';
+const T={ko:{title:'PetWellbe ⇄ 瑞生科健 공동 정산장부',loginT:'로그인',idPh:'아이디',pwPh:'비밀번호',login:'로그인',logout:'로그아웃',badLogin:'아이디 또는 비밀번호가 틀렸어요',
+rate:'환율',krwPerCny:'원 / 1위안',sumCn:'중국에서 받은 약 (양쪽 확인)',sumKr:'한국에서 보낸 물건 (양쪽 확인)',sumPay:'송금·현금 (중국→한국 − 한국→중국)',balance:'최종 잔액 (전체 기록)',both:'양쪽 확인된 것만',
+fAll:'전체',fPend:'확인 대기',fPay:'송금·현금',cn_goods:'중국 발송(약)',kr_goods:'한국 발송(물건)',cn_pay:'중국→한국 송금',kr_pay:'한국→중국 송금·현금',add:'+ 거래 입력',reload:'새로고침',csv:'엑셀(CSV)',
+date:'날짜',kind:'구분',content:'내용',amount:'금액',krw:'원화 환산',by:'입력',confirm:'확인',KR:'한국',CN:'중국',confirmBtn:'확인',confirmed:'확인됨',waiting:'상대 확인 대기',
+titleF:'제목',itemsF:'품목 / 수량 / 단가',cur:'통화',cnAmtF:'상대가 적은 금액 (다를 때만)',noteF:'메모',cancel:'취소',save:'저장',edit:'수정',del:'삭제',undel:'복구',photo:'증빙 첨부',hist:'변경 기록',
+editWarn:'수정하면 상대방이 다시 확인해야 합니다.',newT:'거래 입력',editT:'거래 수정',delQ:'삭제할까요? (상대가 확인해야 반영)',deleted:'삭제됨',saved:'저장됨',rateBy:'최근 변경',
+foot:'+ = 한국이 중국에 줄 돈, − = 중국이 한국에 줄 돈. 2025/11/13 정산과 11/14 송금 62,000위안부터 시작. 노란 줄 = 상대 확인 대기, 빨간 줄 = 양쪽 금액이 다른 건. 내용을 누르면 품목·증빙·변경 기록이 열립니다.',
+cnSays:'상대 기재액',owesKR:'한국이 중국에 줄 돈',owesCN:'중국이 한국에 줄 돈',err:'오류'},
+zh:{title:'PetWellbe ⇄ 瑞生科健 共同对账本',loginT:'登录',idPh:'账号',pwPh:'密码',login:'登录',logout:'退出',badLogin:'账号或密码错误',
+rate:'汇率',krwPerCny:'韩元 / 1元',sumCn:'中方发货（药品，双方已确认）',sumKr:'韩方发货（货物，双方已确认）',sumPay:'汇款·现金（中→韩 − 韩→中）',balance:'最终余额（全部记录）',both:'仅双方已确认',
+fAll:'全部',fPend:'待确认',fPay:'汇款·现金',cn_goods:'中方发货(药)',kr_goods:'韩方发货(货)',cn_pay:'中方→韩方汇款',kr_pay:'韩方→中方汇款·现金',add:'+ 录入',reload:'刷新',csv:'导出(CSV)',
+date:'日期',kind:'类别',content:'内容',amount:'金额',krw:'折合韩元',by:'录入方',confirm:'确认',KR:'韩方',CN:'中方',confirmBtn:'确认',confirmed:'已确认',waiting:'等待对方确认',
+titleF:'标题',itemsF:'品名 / 数量 / 单价',cur:'币种',cnAmtF:'对方记录的金额（不一致时填写）',noteF:'备注',cancel:'取消',save:'保存',edit:'修改',del:'删除',undel:'恢复',photo:'上传凭证',hist:'修改记录',
+editWarn:'修改后需要对方重新确认。',newT:'录入',editT:'修改',delQ:'确定删除？（需对方确认）',deleted:'已删除',saved:'已保存',rateBy:'最近修改',
+foot:'+ = 韩方应付中方，− = 中方应付韩方。从2025年11月13日结算及11月14日汇款62,000元开始。黄色 = 等待对方确认，红色 = 双方金额不一致。点击内容可查看明细、凭证和修改记录。',
+cnSays:'对方金额',owesKR:'韩方应付中方',owesCN:'中方应付韩方',err:'错误'}};
+let L=localStorage.getItem('pwL')||((navigator.language||'').startsWith('ko')?'ko':'zh'),F='all',E=[],RATE=200,RATEINFO=null,ME=null,SES=JSON.parse(localStorage.getItem('pwS')||'null'),editing=null,photoFor=null;
+const t=k=>T[L][k]??k,pick=s=>s&&s.includes('|')?s.split('|')[L==='ko'?0:1]:(s||'');
+const fm=n=>Math.round(n).toLocaleString('en-US'),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const amt=e=>(e.items||[]).reduce((a,x)=>a+(+x[1]||0)*(+x[2]||0),0),krw=e=>e.cur==='CNY'?amt(e)*RATE:amt(e);
+const sign={cn_goods:1,kr_goods:-1,cn_pay:1,kr_pay:-1},both=e=>e.ok_kr&&e.ok_cn,myOk=e=>ME==='KR'?e.ok_kr:e.ok_cn;
+const toast=s=>{msg.textContent=s;msg.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>msg.style.display='none',2200)};
+async function auth(body,grant){const r=await fetch(SU+'/auth/v1/token?grant_type='+grant,{method:'POST',headers:{apikey:SK,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error('auth');const j=await r.json();SES={a:j.access_token,r:j.refresh_token,x:Date.now()+(j.expires_in-60)*1000};localStorage.setItem('pwS',JSON.stringify(SES));}
+async function tok(){if(!SES)throw new Error('nologin');if(Date.now()>SES.x)await auth({refresh_token:SES.r},'refresh_token');return SES.a;}
+async function api(path,opt={}){const a=await tok();const r=await fetch(SU+path,{...opt,headers:{apikey:SK,Authorization:'Bearer '+a,'Content-Type':'application/json',Prefer:'return=representation',...(opt.headers||{})}});if(r.status===401){SES=null;localStorage.removeItem('pwS');show();throw new Error('401');}if(!r.ok)throw new Error(t('err')+' '+r.status+' '+(await r.text()).slice(0,120));const tx=await r.text();return tx?JSON.parse(tx):null;}
+async function load(){const [m,en,st]=await Promise.all([api('/rest/v1/members?select=side,user_id'),api('/rest/v1/entries?select=*&order=date.asc,created_at.asc'),api('/rest/v1/settings?select=*&key=eq.rate')]);
+ const uid=JSON.parse(atob(SES.a.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).sub;ME=(m.find(x=>x.user_id===uid)||{}).side;E=en;if(st[0]){RATE=+st[0].value;RATEINFO=st[0];}render();}
+function apply(){document.documentElement.lang=L==='ko'?'ko':'zh-CN';document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));document.querySelectorAll('[data-ph]').forEach(el=>el.placeholder=t(el.dataset.ph));lk.classList.toggle('on',L==='ko');lz.classList.toggle('on',L==='zh');}
+function render(){apply();who.textContent=ME?t(ME)+' · '+(ME==='KR'?'PetWellbe':'瑞生科健'):'';
+ document.querySelectorAll('[data-f]').forEach(b=>b.classList.toggle('on',b.dataset.f===F));
+ if(document.activeElement!==rate)rate.value=RATE;rateInfo.textContent=RATEINFO&&RATEINFO.updated_side?t('rateBy')+': '+t(RATEINFO.updated_side==='ADMIN'?'KR':RATEINFO.updated_side)+' '+new Date(RATEINFO.updated_at).toLocaleDateString():'';
+ let cn=0,kr=0,pay=0,b1=0,b2=0;for(const e of E){if(e.deleted&&both(e))continue;if(e.deleted)continue;const v=krw(e)*sign[e.type];b2+=v;if(both(e)){b1+=v;if(e.type==='cn_goods')cn+=v;else if(e.type==='kr_goods')kr-=v;else pay+=v;}}
+ const lab=v=>(v>=0?t('owesKR'):t('owesCN'))+' '+fm(Math.abs(v))+'원 ('+fm(Math.abs(v)/RATE)+'元)';
+ sCn.textContent=fm(cn)+'원';sKr.textContent=fm(kr)+'원';sPay.textContent=fm(pay)+'원';bal.textContent=lab(b2);bal2.textContent=t('both')+': '+lab(b1);
+ const rows=E.filter(e=>F==='all'||(F==='pend'&&!both(e))||(F==='pay'&&/pay/.test(e.type))||e.type===F);
+ tb.innerHTML=rows.map(e=>{const a=amt(e);const ok=both(e)?`<span class="ok">✔ ${t('confirmed')}</span>`:(myOk(e)?`<span class="no">${t('waiting')}</span>`:`<button class="btn p" data-c="${e.id}">${t('confirmBtn')}</button>`);
+  const cls=e.deleted?'del':(both(e)?'':(e.cn_amount!=null?'disp':'pend'));
+  return `<tr class="${cls}" id="r${e.id}"><td>${e.date}</td><td><span class="tag t-${e.type}">${t(e.type)}</span></td>
+  <td style="cursor:pointer" data-x="${e.id}">${esc(pick(e.title))} <span style="color:#99a">(${(e.items||[]).length}) ▾</span>${e.deleted?' <b>['+t('deleted')+']</b>':''}
+  ${e.note?`<div class="note">${esc(pick(e.note))}</div>`:''}
+  <div class="det">${(e.items||[]).map(x=>`${esc(x[0])} · ${fm(x[1])} × ${(+x[2]).toLocaleString('en-US')} = ${fm(x[1]*x[2])}`).join('<br>')}
+   <div style="margin-top:6px">${(e.photos||[]).map((p,i)=>`<span class="ph" data-p="${esc(p)}">📎 ${i+1}</span>`).join('')}</div>
+   <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn" data-e="${e.id}">${t('edit')}</button><button class="btn" data-u="${e.id}">${t('photo')}</button><button class="btn" data-h="${e.id}">${t('hist')}</button><button class="btn d" data-d="${e.id}">${e.deleted?t('undel'):t('del')}</button></div><div id="h${e.id}"></div></div></td>
+  <td class="n">${fm(a)} ${e.cur==='CNY'?'元':'원'}${e.cn_amount!=null?`<div class="cnamt">${t('cnSays')} ${fm(e.cn_amount)}</div>`:''}</td>
+  <td class="n">${e.deleted?'-':fm(krw(e)*sign[e.type])}</td><td class="h-by">${t(e.by_side)}</td><td>${ok}</td></tr>`}).join('');
+}
+function show(){const inn=!!SES;login.style.display=inn?'none':'block';app.style.display=inn?'block':'none';out.style.display=inn?'':'none';apply();if(inn)load().catch(e=>toast(e.message));}
+go.onclick=async()=>{err.textContent='';let id=uid.value.trim();if(!id.includes('@'))id+=DOM;try{await auth({email:id,password:upw.value},'password');upw.value='';show();}catch(e){err.textContent=t('badLogin');}};
+upw.onkeydown=e=>{if(e.key==='Enter')go.click()};
+out.onclick=()=>{SES=null;localStorage.removeItem('pwS');show();};
+lk.onclick=()=>{L='ko';localStorage.setItem('pwL',L);SES?render():apply()};lz.onclick=()=>{L='zh';localStorage.setItem('pwL',L);SES?render():apply()};
+rate.onchange=async()=>{const v=+rate.value;if(!(v>0))return;try{const r=await api('/rest/v1/settings?key=eq.rate',{method:'PATCH',body:JSON.stringify({value:String(v)})});RATE=v;RATEINFO=r[0];render();toast(t('saved'));}catch(e){toast(e.message)}};
+document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{F=b.dataset.f;render()});
+reload.onclick=()=>load().then(()=>toast('OK')).catch(e=>toast(e.message));
+const patch=(id,body)=>api('/rest/v1/entries?id=eq.'+id,{method:'PATCH',body:JSON.stringify(body)}).then(r=>{const i=E.findIndex(x=>x.id===id);E[i]=r[0];render();document.getElementById('r'+id)?.classList.add('open');});
+tb.onclick=async ev=>{const g=k=>ev.target.closest('[data-'+k+']')?.dataset[k];let id;
+ try{
+ if(id=g('c')){await patch(id,ME==='KR'?{ok_kr:true}:{ok_cn:true});toast(t('saved'));return;}
+ if(id=g('e')){openDlg(E.find(x=>x.id===id));return;}
+ if(id=g('d')){const e=E.find(x=>x.id===id);if(!e.deleted&&!confirm(t('delQ')))return;await patch(id,{deleted:!e.deleted});return;}
+ if(id=g('u')){photoFor=id;file.value='';file.click();return;}
+ if(id=g('h')){const h=await api('/rest/v1/history?select=action,side,at,new&entry_id=eq.'+id+'&order=id.asc');document.getElementById('h'+id).innerHTML='<div style="margin-top:6px">'+h.map(x=>`${new Date(x.at).toLocaleString()} · ${x.side==='ADMIN'?t('KR'):t(x.side)} · ${x.action} · ${fm(amt(x.new))} · KR${x.new.ok_kr?'✔':'–'} CN${x.new.ok_cn?'✔':'–'}${x.new.deleted?' ['+t('deleted')+']':''}`).join('<br>')+'</div>';return;}
+ if(id=g('p')){const r=await api('/storage/v1/object/sign/evidence/'+id,{method:'POST',body:JSON.stringify({expiresIn:600})});window.open(SU+'/storage/v1'+r.signedURL,'_blank');return;}
+ if(id=g('x')){ev.target.closest('tr').classList.toggle('open');}
+ }catch(e){toast(e.message)}};
+file.onchange=async()=>{const f=file.files[0];if(!f||!photoFor)return;const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');const path=photoFor+'/'+Date.now()+'.'+ext;
+ try{const a=await tok();const r=await fetch(SU+'/storage/v1/object/evidence/'+path,{method:'POST',headers:{apikey:SK,Authorization:'Bearer '+a,'Content-Type':f.type||'application/octet-stream'},body:f});if(!r.ok)throw new Error(t('err')+' '+r.status);
+ const e=E.find(x=>x.id===photoFor);await patch(photoFor,{photos:[...(e.photos||[]),path]});toast(t('saved'));}catch(e){toast(e.message)}};
+const addRowF=(x=['',1,''])=>{const d=document.createElement('div');d.className='row';d.innerHTML=`<input value="${esc(x[0])}"><input type="number" step="any" value="${x[1]}"><input type="number" step="any" value="${x[2]}"><button type="button" class="btn">×</button>`;d.lastChild.onclick=()=>d.remove();rows.appendChild(d)};
+addRow.onclick=()=>addRowF();
+function openDlg(e){editing=e||null;apply();dlgT.textContent=e?t('editT'):t('newT');fType.innerHTML=['cn_goods','kr_goods','cn_pay','kr_pay'].map(k=>`<option value="${k}">${t(k)}</option>`).join('');
+ rows.innerHTML='';(e?e.items:[['',1,'']]).forEach(addRowF);fDate.value=e?e.date:new Date().toISOString().slice(0,10);fType.value=e?e.type:(ME==='CN'?'cn_goods':'kr_goods');
+ fTitle.value=e?pick(e.title):'';fCur.value=e?e.cur:(ME==='CN'?'CNY':'KRW');fCn.value=e&&e.cn_amount!=null?e.cn_amount:'';fNote.value=e?pick(e.note):'';dlg.showModal();}
+add.onclick=()=>openDlg(null);
+dlg.addEventListener('close',async()=>{if(dlg.returnValue!=='ok')return;const items=[...rows.children].map(r=>{const i=r.querySelectorAll('input');return[i[0].value.trim(),+i[1].value||0,+i[2].value||0]}).filter(x=>x[2]);if(!items.length)return;
+ const body={date:fDate.value,type:fType.value,title:fTitle.value.trim()||t(fType.value),items,cur:fCur.value,note:fNote.value.trim(),cn_amount:fCn.value===''?null:+fCn.value};
+ try{if(editing){await patch(editing.id,body);}else{const r=await api('/rest/v1/entries',{method:'POST',body:JSON.stringify(body)});E.push(r[0]);E.sort((a,b)=>a.date.localeCompare(b.date));render();}toast(t('saved'));}catch(e){toast(e.message)}});
+csv.onclick=()=>{const head=['date','type','title','items','currency','amount','krw','by','ok_kr','ok_cn','deleted','note'];const lines=[head.join(',')].concat(E.map(e=>[e.date,t(e.type),pick(e.title),(e.items||[]).map(x=>x[0]+' '+x[1]+'x'+x[2]).join(' / '),e.cur,amt(e),Math.round(krw(e)*sign[e.type]),e.by_side,e.ok_kr,e.ok_cn,e.deleted,pick(e.note)].map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')));
+ const b=new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ledger_'+new Date().toISOString().slice(0,10)+'.csv';a.click();};
+setInterval(()=>{if(SES&&!dlg.open&&document.visibilityState==='visible')load().catch(()=>{})},60000);
+show();
+</script></body></html>
