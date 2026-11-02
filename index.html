@@ -119,7 +119,7 @@ function render(){apply();who.textContent=ME?t(ME)+' · '+(ME==='KR'?'PetWellbe'
   <td class="n">${fm(a)} ${e.cur==='CNY'?'元':'원'}${e.cn_amount!=null?`<div class="cnamt">${t('cnSays')} ${fm(e.cn_amount)}</div>`:''}</td>
   <td class="n">${e.deleted?'-':fm(krw(e)*sign[e.type])}</td><td class="h-by">${t(e.by_side)}</td><td>${ok}</td></tr>`}).join('');
 }
-function show(){const inn=!!SES;login.style.display=inn?'none':'block';app.style.display=inn?'block':'none';out.style.display=inn?'':'none';apply();if(inn)load().catch(e=>toast(e.message));}
+function show(){const inn=!!SES;if(!inn){who.textContent='';E=[];}login.style.display=inn?'none':'block';app.style.display=inn?'block':'none';out.style.display=inn?'':'none';apply();if(inn)load().catch(e=>toast(e.message));}
 go.onclick=async()=>{err.textContent='';let id=uid.value.trim();if(!id.includes('@'))id+=DOM;try{await auth({email:id,password:upw.value},'password');upw.value='';show();}catch(e){err.textContent=t('badLogin');}};
 upw.onkeydown=e=>{if(e.key==='Enter')go.click()};
 out.onclick=()=>{SES=null;localStorage.removeItem('pwS');show();};
