@@ -23,7 +23,7 @@ dialog{border:none;border-radius:12px;padding:0;width:min(640px,96vw)}dialog for
 .msg{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1d2433;color:#fff;padding:8px 14px;border-radius:8px;display:none;z-index:9}
 #gate{max-width:420px;margin:60px auto;background:#fff;border-radius:12px;padding:22px;text-align:center;display:none}
 @media(max-width:700px){body{font-size:13px}th,td{padding:6px 4px}.hm{display:none}}
-</style></head><body>
+</style><script>const APPV='20261105b';fetch(location.pathname+'?nc='+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APPV='([^']+)'/);if(m&&m[1]!==APPV&&!sessionStorage.getItem('rl'+m[1])){sessionStorage.setItem('rl'+m[1],'1');location.replace(location.pathname+'?v='+m[1]);}}).catch(()=>{});</script></head><body>
 <header><h1>펫웰비 한국 판매관리 <span class="sub" style="color:#cfe">(한국 계정 전용)</span></h1><div><a href="index.html">← 정산장부</a> · 환율 <b id="rateV"></b>원/위안</div></header>
 <div id="gate">한국 계정으로 로그인해야 볼 수 있어요.<br><br><a class="btn p" href="index.html">로그인하러 가기</a></div>
 <nav id="nav" style="display:none"><button data-tab="sum" class="on">월별 요약</button><button data-tab="sales">판매</button><button data-tab="pay">입금</button><button data-tab="cust">거래처</button><button data-tab="prod">품목·재고</button></nav>
